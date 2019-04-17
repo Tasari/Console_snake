@@ -8,40 +8,34 @@ import sys
 import os
 
 #Global options
-max_x = 50
-max_y = 50
-size_x = 25
-size_y = 25
-border_symbol = '#'
-fruit_symbol = '░'
-snake_symbol = '█'
-blank_spot = ' '
-speed = 1
-impassable_symbols = ['##', '██', '# ', ' #']
-a = None
-direction = 'a'
-
+size_x = 30
+size_y = 30
+border_symbol = '#'*2
+fruit_symbol = '░'*2
+snake_symbol = '█'*2
+blank_spot = ' '*2
+speed = 0.01
+impassable_symbols = [border_symbol, snake_symbol, border_symbol[0]+blank_spot[0], blank_spot[0]+border_symbol[0]]
+direction = 'w'
+snek_lenght = 3
+#DO NOT TOUCH
+moves = []
+move_x = None
+del_x = None
 #function used in direction_change to do input without stopping program
 def inputter():
     global temp_direction
     input_direction = input()
     if input_direction != direction:
         temp_direction = input_direction
-    return temp_direction
-
-#function used in direction_change to end threaded input without user needing to press enter
-def finisher():
-    time.sleep(0.5)
-    pyautogui.press('enter')
 
 #function used to change direction of snake
 def direction_change():
     global temp_direction
     temp_direction = threading.Thread(target=inputter)
     temp_direction.start()#create input tread without stopping program
-    threading.Thread(target=finisher).start()#end input thread
+    pyautogui.press('enter')
     global direction
-    time.sleep(0.6)
     #assure that player won't be able to go turn 180°
     if temp_direction == 'w' and direction != 's':
         direction = temp_direction
@@ -51,11 +45,30 @@ def direction_change():
         direction = temp_direction
     elif temp_direction == 'd' and direction != 'a':
         direction = temp_direction
-
+#function called after moving into impassable tile
 def game_over():
     print('Przegrałeś')
     input()
-    sys.exit(1)
+    sys.exit(0)
+
+    #Delete last tile of snake
+def snek_del(list, moves):
+    global del_x, del_y
+    if del_x == None:
+        del_x = int(size_x/2)
+        del_y = int((size_y/2)+snek_lenght)
+    else:
+        del_direction = moves[0]
+        moves.pop(0)
+        if del_direction == 'w':
+            del_y -= 1
+        elif del_direction == 'a':
+            del_x -= 1
+        elif del_direction == 's':
+            del_y += 1
+        elif del_direction == 'd':
+            del_x += 1
+    return del_x, del_y
 
 #Create Map() class to work on our map of snake
 class Map():
@@ -74,18 +87,18 @@ class Map():
         return board  
 
     #Change the coords to make create appearance of tiles       
-    def change_map_tiles(self, list, bordersymbol=border_symbol):
+    def change_map_tiles(self, list):
         #Make all of them blank
         for y in range(size_y):
             for x in range(size_x):
-                list[y][x]= '  '
+                list[y][x]= blank_spot
         #Add some other shapes to create border
         for y in range(size_y):
-            list[0][y] = bordersymbol + ' '#left side
-            list[size_x-1][y] = ' ' + bordersymbol#right side
+            list[0][y] = border_symbol[0] + blank_spot[0] #left side
+            list[size_x-1][y] = blank_spot[0] + border_symbol[0]#right side
         for x in range(size_x):
-            list[x][0] = bordersymbol*2#upper side
-            list[x][size_y-1] = bordersymbol*2#lower side
+            list[x][0] = border_symbol#upper side
+            list[x][size_y-1] = border_symbol#lower side
 
     #Add function to draw a map from coords in form of string
     def map_drawer(self, list):
@@ -100,78 +113,98 @@ class Map():
         while 1:
             y = random.randint(1, size_y-2)
             x = random.randint(1, size_x-2) 
-            if(list[x][y]== '  '):#Assure our fruits won't spawn on occupied tiles
-                list[x][y] = fruitsymbol*2
+            if(list[x][y]== blank_spot):#Assure our fruits won't spawn on occupied tiles
+                list[x][y] = fruitsymbol
                 break
             else:#In case it wants to spawn where snake actually is
                 continue
 
     #Create Player's snake
-    def snek_spawn(self, list):
+    def snek_spawn(self, list, snek_lenght):
         y = int(size_y/2)
         x = int(size_x/2)
-        snek_lenght = 5
         for part in range(snek_lenght):
-            list[x][y] = snake_symbol*2
+            list[x][y] = snake_symbol
             y += 1
+            moves.append('w')
 
     #Create snake movement
     def snek_move(self, list, direction):
         #starting point
-        global a, b
-        if a == None:
-            a = int(size_y/2)
-            b = int(size_x/2)
-        #góra
-        if direction == 'w':
-            if list[a][b-1] in impassable_symbols:
-                game_over()
-            elif list[a][b-1] == fruit_symbol*2:
-                list[a][b-1] = snake_symbol*2
-                b -= 1
-            elif list[a][b-1] == '  ':
-                list[a][b-1] = snake_symbol*2
-                b -= 1
-        #lewo
-        elif direction == 'a':
-            if list[a-1][b] in impassable_symbols:
-                game_over()
-            elif list[a-1][b] == fruit_symbol*2:
-                list[a-1][b] = snake_symbol*2
-                a -= 1
-            elif list[a-1][b] == '  ':
-                list[a-1][b] = snake_symbol*2
-                a -= 1
-        #dół
-        elif direction == 's':
-            if list[a][b+1] in impassable_symbols:
-                game_over()
-            elif list[a][b+1] == fruit_symbol*2:
-                list[a][b+1] = snake_symbol*2
-                b += 1
-            elif list[a][b+1] == '  ':
-                list[a][b+1] = snake_symbol*2
-                b += 1
-        #prawo
-        elif direction == 'd':
-            if list[a+1][b] in impassable_symbols:
-                game_over()
-            elif list[a+1][b] == fruit_symbol*2:
-                list[a+1][b] = snake_symbol*2
-                a += 1
-            elif list[a+1][b] == '  ':
-                list[a+1][b] = snake_symbol*2
-                a += 1
+        global move_x, move_y
+        if move_x == None:
+            move_x = int(size_y/2)
+            move_y = int(size_x/2)
         direction_change()
-        time.sleep(0.5)
-
-        
-
-
+        #up
+        if direction == 'w':
+            #print(list[a][b-1])
+            if list[move_x][move_y-1] in impassable_symbols:
+                game_over()
+            elif list[move_x][move_y-1] == fruit_symbol:
+                table.fruit_spawn(coords)
+                list[move_x][move_y-1] = snake_symbol
+                move_y -= 1
+            elif list[move_x][move_y-1] == blank_spot:
+                list[move_x][move_y-1] = snake_symbol
+                move_y -= 1
+                del_x, del_y = snek_del(list, moves)
+                list[del_x][del_y] = blank_spot
+            moves.append('w')
+        #left
+        elif direction == 'a':
+            #print(list[a-1][b])
+            if list[move_x-1][move_y] in impassable_symbols:
+                game_over()
+            elif list[move_x-1][move_y] == fruit_symbol:
+                list[move_x-1][move_y] = snake_symbol
+                move_x -= 1
+                table.fruit_spawn(coords)
+            elif list[move_x-1][move_y] == blank_spot:
+                list[move_x-1][move_y] = snake_symbol
+                move_x -= 1
+                del_x, del_y = snek_del(list, moves)
+                list[del_x][del_y] = blank_spot
+            moves.append('a')
+        #down
+        elif direction == 's':
+            if list[move_x][move_y+1] in impassable_symbols:
+                game_over()
+            elif list[move_x][move_y+1] == fruit_symbol:
+                list[move_x][move_y+1] = snake_symbol
+                move_y += 1
+                table.fruit_spawn(coords)
+            elif list[move_x][move_y+1] == blank_spot:
+                list[move_x][move_y+1] = snake_symbol
+                move_y += 1
+                del_x, del_y = snek_del(list, moves)
+                list[del_x][del_y] = blank_spot
+            moves.append('s')
+        #right
+        elif direction == 'd':
+            if list[move_x+1][move_y] in impassable_symbols:
+                game_over()
+            elif list[move_x+1][move_y] == fruit_symbol:
+                list[move_x+1][move_y] = snake_symbol
+                move_x += 1
+                table.fruit_spawn(coords)
+            elif list[move_x+1][move_y] == blank_spot:
+                list[move_x+1][move_y] = snake_symbol
+                move_x += 1
+                del_x, del_y = snek_del(list, moves)
+                list[del_x][del_y] = blank_spot
+            moves.append('d')
+#create map        
 table = Map(size_x, size_y)
+#create coords
 coords = table.create_2d_table()
+#create cooler tiles
 table.change_map_tiles(coords)
-table.snek_spawn(coords)
+#create snake
+table.snek_spawn(coords, snek_lenght)
+#create fruit
+table.fruit_spawn(coords)
+#move the snake
 while 1:
     table.snek_move(coords, direction)
     time.sleep(speed)
