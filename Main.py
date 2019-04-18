@@ -6,19 +6,23 @@ import time
 import pyautogui
 import sys
 import os
+import colorama
 
 #Global options
 size_x = 30
 size_y = 30
-border_symbol = '#'*2
-fruit_symbol = '░'*2
-snake_symbol = '█'*2
-blank_spot = ' '*2
+border_symbol = colorama.Fore.LIGHTBLACK_EX + '#' * 2 + colorama.Style.RESET_ALL
+classic_fruit_symbol = colorama.Fore.MAGENTA + '░' * 2 + colorama.Style.RESET_ALL
+snake_symbol = colorama.Fore.GREEN + '█' * 2 + colorama.Style.RESET_ALL
+blank_spot = colorama.Fore.WHITE + ' ' * 2 + colorama.Style.RESET_ALL
+left_border = colorama.Fore.LIGHTBLACK_EX + ' #' + colorama.Style.RESET_ALL
+right_border = colorama.Fore.LIGHTBLACK_EX + '# ' + colorama.Style.RESET_ALL
 speed = 0.01
-impassable_symbols = [border_symbol, snake_symbol, border_symbol[0]+blank_spot[0], blank_spot[0]+border_symbol[0]]
+impassable_symbols = [border_symbol, snake_symbol, left_border, right_border]
 direction = 'w'
 snek_lenght = 3
 #DO NOT TOUCH
+score = 0
 moves = []
 move_x = None
 del_x = None
@@ -28,7 +32,10 @@ def inputter():
     input_direction = input()
     if input_direction != direction:
         temp_direction = input_direction
-
+#Player score
+def score_up(x):
+    global score
+    score += x
 #function used to change direction of snake
 def direction_change():
     global temp_direction
@@ -51,6 +58,10 @@ def game_over():
     input()
     sys.exit(0)
 
+def fruit_collected(fruit_obj, list):
+    fruit_obj.effect()
+    fruit_obj.fruit_spawn(list)
+
     #Delete last tile of snake
 def snek_del(list, moves):
     global del_x, del_y
@@ -69,6 +80,25 @@ def snek_del(list, moves):
         elif del_direction == 'd':
             del_x += 1
     return del_x, del_y
+
+class Fruit():
+    def __init__(self, fruit_symbol):
+        self.fruit_symbol = fruit_symbol
+
+        #Spawn point creating device with random spawn on board
+    def fruit_spawn(self, list):
+        while 1:
+            y = random.randint(1, size_y-2)
+            x = random.randint(1, size_x-2) 
+            if(list[x][y]== blank_spot):#Assure our fruits won't spawn on occupied tiles
+                list[x][y] = self.fruit_symbol
+                break
+            else:#In case it wants to spawn where snake actually is
+                continue
+
+class Classic_Fruit(Fruit):
+    def effect(self):
+        score_up(100)
 
 #Create Map() class to work on our map of snake
 class Map():
@@ -93,12 +123,13 @@ class Map():
             for x in range(size_x):
                 list[y][x]= blank_spot
         #Add some other shapes to create border
-        for y in range(size_y):
-            list[0][y] = border_symbol[0] + blank_spot[0] #left side
-            list[size_x-1][y] = blank_spot[0] + border_symbol[0]#right side
         for x in range(size_x):
             list[x][0] = border_symbol#upper side
             list[x][size_y-1] = border_symbol#lower side
+        for y in range(size_y):
+            list[0][y] = left_border#left side
+            list[size_x-1][y] = right_border#right side
+
 
     #Add function to draw a map from coords in form of string
     def map_drawer(self, list):
@@ -107,17 +138,6 @@ class Map():
             for y in range(size_y):
                 visual_map += str(list[y][x])
             print(visual_map.center(75))
-
-    #Spawn point creating device with random spawn on board
-    def fruit_spawn(self, list, fruitsymbol = fruit_symbol):
-        while 1:
-            y = random.randint(1, size_y-2)
-            x = random.randint(1, size_x-2) 
-            if(list[x][y]== blank_spot):#Assure our fruits won't spawn on occupied tiles
-                list[x][y] = fruitsymbol
-                break
-            else:#In case it wants to spawn where snake actually is
-                continue
 
     #Create Player's snake
     def snek_spawn(self, list, snek_lenght):
@@ -141,8 +161,8 @@ class Map():
             #print(list[a][b-1])
             if list[move_x][move_y-1] in impassable_symbols:
                 game_over()
-            elif list[move_x][move_y-1] == fruit_symbol:
-                table.fruit_spawn(coords)
+            elif list[move_x][move_y-1] == classic_fruit_symbol:
+                fruit_collected(classic_fruit_obj, coords)
                 list[move_x][move_y-1] = snake_symbol
                 move_y -= 1
             elif list[move_x][move_y-1] == blank_spot:
@@ -156,10 +176,10 @@ class Map():
             #print(list[a-1][b])
             if list[move_x-1][move_y] in impassable_symbols:
                 game_over()
-            elif list[move_x-1][move_y] == fruit_symbol:
+            elif list[move_x-1][move_y] == classic_fruit_symbol:
+                fruit_collected(classic_fruit_obj, coords)
                 list[move_x-1][move_y] = snake_symbol
                 move_x -= 1
-                table.fruit_spawn(coords)
             elif list[move_x-1][move_y] == blank_spot:
                 list[move_x-1][move_y] = snake_symbol
                 move_x -= 1
@@ -170,10 +190,10 @@ class Map():
         elif direction == 's':
             if list[move_x][move_y+1] in impassable_symbols:
                 game_over()
-            elif list[move_x][move_y+1] == fruit_symbol:
+            elif list[move_x][move_y+1] == classic_fruit_symbol:
+                fruit_collected(classic_fruit_obj, coords)
                 list[move_x][move_y+1] = snake_symbol
                 move_y += 1
-                table.fruit_spawn(coords)
             elif list[move_x][move_y+1] == blank_spot:
                 list[move_x][move_y+1] = snake_symbol
                 move_y += 1
@@ -184,10 +204,10 @@ class Map():
         elif direction == 'd':
             if list[move_x+1][move_y] in impassable_symbols:
                 game_over()
-            elif list[move_x+1][move_y] == fruit_symbol:
+            elif list[move_x+1][move_y] == classic_fruit_symbol:
+                fruit_collected(classic_fruit_obj, coords)
                 list[move_x+1][move_y] = snake_symbol
                 move_x += 1
-                table.fruit_spawn(coords)
             elif list[move_x+1][move_y] == blank_spot:
                 list[move_x+1][move_y] = snake_symbol
                 move_x += 1
@@ -203,7 +223,8 @@ table.change_map_tiles(coords)
 #create snake
 table.snek_spawn(coords, snek_lenght)
 #create fruit
-table.fruit_spawn(coords)
+classic_fruit_obj = Classic_Fruit(classic_fruit_symbol)
+classic_fruit_obj.fruit_spawn(coords)
 #move the snake
 while 1:
     table.snek_move(coords, direction)
