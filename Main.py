@@ -11,37 +11,53 @@ import colorama
 #Global options
 size_x = 30
 size_y = 30
-border_symbol = colorama.Fore.LIGHTBLACK_EX + '#' * 2 + colorama.Style.RESET_ALL
-classic_fruit_symbol = colorama.Fore.MAGENTA + '░' * 2 + colorama.Style.RESET_ALL
+border_symbol = colorama.Fore.WHITE + '#' * 2 + colorama.Style.RESET_ALL
+classic_fruit_symbol = colorama.Fore.RED + '░' * 2 + colorama.Style.RESET_ALL
+speed_fruit_symbol = colorama.Fore.BLUE + '░' * 2 + colorama.Style.RESET_ALL
+boring_fruit_symbol = colorama.Fore.YELLOW + '░' * 2 + colorama.Style.RESET_ALL
+drunk_fruit_symbol = colorama.Fore.MAGENTA + '░' * 2 + colorama.Style.RESET_ALL
+death_fruit_symbol = colorama.Fore.WHITE + '░' * 2 + colorama.Style.RESET_ALL
 snake_symbol = colorama.Fore.GREEN + '█' * 2 + colorama.Style.RESET_ALL
-blank_spot = colorama.Fore.WHITE + ' ' * 2 + colorama.Style.RESET_ALL
-left_border = colorama.Fore.LIGHTBLACK_EX + ' #' + colorama.Style.RESET_ALL
-right_border = colorama.Fore.LIGHTBLACK_EX + '# ' + colorama.Style.RESET_ALL
-speed = 0.01
-impassable_symbols = [border_symbol, snake_symbol, left_border, right_border]
-direction = 'w'
-snek_lenght = 3
+blank_spot = colorama.Fore.BLACK + colorama.Back.BLACK + ' ' * 2 + colorama.Style.RESET_ALL
+left_border = colorama.Fore.WHITE + ' #' + colorama.Style.RESET_ALL
+right_border = colorama.Fore.WHITE + '# ' + colorama.Style.RESET_ALL
+speed = 0.1
+direction = None
+snek_lenght = 4
 #DO NOT TOUCH
+system = sys.platform
 score = 0
 moves = []
 move_x = None
 del_x = None
+boring_fruit_flag = False
+drunk_fruit_flag = False
+fruits = [boring_fruit_symbol, classic_fruit_symbol, death_fruit_symbol, drunk_fruit_symbol, speed_fruit_symbol]
+impassable_symbols = [border_symbol, snake_symbol, left_border, right_border]
+pyautogui.PAUSE = 0.02
+
+#Player score increaser
+def score_up(x):
+    global score
+    score += x
+
 #function used in direction_change to do input without stopping program
 def inputter():
     global temp_direction
     input_direction = input()
     if input_direction != direction:
         temp_direction = input_direction
-#Player score
-def score_up(x):
-    global score
-    score += x
+
 #function used to change direction of snake
 def direction_change():
     global temp_direction
-    temp_direction = threading.Thread(target=inputter)
-    temp_direction.start()#create input tread without stopping program
-    pyautogui.press('enter')
+    if drunk_fruit_flag == True:
+        directions = ['w', 'a', 's', 'd']
+        temp_direction = directions[random.randrange(0,3)]
+    else:
+        temp_direction = threading.Thread(target=inputter)
+        temp_direction.start()#create input tread without stopping program
+        pyautogui.press('enter')
     global direction
     #assure that player won't be able to go turn 180°
     if temp_direction == 'w' and direction != 's':
@@ -52,17 +68,21 @@ def direction_change():
         direction = temp_direction
     elif temp_direction == 'd' and direction != 'a':
         direction = temp_direction
-#function called after moving into impassable tile
-def game_over():
-    print('Przegrałeś')
-    input()
-    sys.exit(0)
 
-def fruit_collected(fruit_obj, list):
-    fruit_obj.effect()
-    fruit_obj.fruit_spawn(list)
+#Effect of eating boring fruit - You are unable to change direction
+def boring_fruit_effect():
+    global boring_fruit_flag
+    boring_fruit_flag = True
+    time.sleep(speed*(size_x+size_y)/4)
+    boring_fruit_flag = False
+#Effect of eating drunk fruit - Your direction is changed randomly
+def drunk_fruit_effect():
+    global drunk_fruit_flag
+    drunk_fruit_flag = True
+    time.sleep(speed*(size_x+size_y)/15)
+    drunk_fruit_flag = False
 
-    #Delete last tile of snake
+#Delete last tile of snake
 def snek_del(list, moves):
     global del_x, del_y
     if del_x == None:
@@ -81,24 +101,12 @@ def snek_del(list, moves):
             del_x += 1
     return del_x, del_y
 
-class Fruit():
-    def __init__(self, fruit_symbol):
-        self.fruit_symbol = fruit_symbol
-
-        #Spawn point creating device with random spawn on board
-    def fruit_spawn(self, list):
-        while 1:
-            y = random.randint(1, size_y-2)
-            x = random.randint(1, size_x-2) 
-            if(list[x][y]== blank_spot):#Assure our fruits won't spawn on occupied tiles
-                list[x][y] = self.fruit_symbol
-                break
-            else:#In case it wants to spawn where snake actually is
-                continue
-
-class Classic_Fruit(Fruit):
-    def effect(self):
-        score_up(100)
+#function called after moving into impassable tile
+def game_over():
+    global score
+    print('You lose')
+    print('Your final score is ' + str(score))
+    sys.exit(0)
 
 #Create Map() class to work on our map of snake
 class Map():
@@ -111,7 +119,7 @@ class Map():
         board = []
         for y in range(self.map_y):
             y_table = []
-            for x in range(self.map_x):
+            for x in range(self.map_x + 1):
                 y_table.append(x)
             board.append(y_table)
         return board  
@@ -123,21 +131,37 @@ class Map():
             for x in range(size_x):
                 list[y][x]= blank_spot
         #Add some other shapes to create border
-        for x in range(size_x):
+        for x in range(size_x-1):
             list[x][0] = border_symbol#upper side
             list[x][size_y-1] = border_symbol#lower side
         for y in range(size_y):
             list[0][y] = left_border#left side
-            list[size_x-1][y] = right_border#right side
-
-
+            list[size_x-2][y] = right_border#right side
+        list[int(size_x/2)][int(size_y/2)] = snake_symbol
+        list[size_x-1][1] = classic_fruit_symbol + ' - Classic Fruit' 
+        list[size_x-1][2] = 'Just points (250 points)'
+        list[size_x-1][4] = speed_fruit_symbol + ' - Speed Fruit' 
+        list[size_x-1][5] = 'Increase your speed (500 points)'
+        list[size_x-1][7] = boring_fruit_symbol + ' - Boring Fruit'  
+        list[size_x-1][8] = 'Lose ability to change'
+        list[size_x-1][9] = 'direction for {} moves (750 points)'.format(int((size_x+size_y)/4))
+        list[size_x-1][11] = drunk_fruit_symbol + ' - Drunk Fruit'
+        list[size_x-1][12] = 'Randomly change directions'
+        list[size_x-1][13] = 'for {} moves (1500 points)'.format(int((size_x+size_y)/20))
+        list[size_x -1][15] = death_fruit_symbol + ' - Death Fruit' 
+        list[size_x-1][16] = 'You collect it, you die, simple and fun,'
+        list[size_x-1][17] = 'you also get your final score multiplied'
     #Add function to draw a map from coords in form of string
     def map_drawer(self, list):
+        visual_map = ''
         for x in range(size_x):
-            visual_map = ''
+            visual_row = ''
             for y in range(size_y):
-                visual_map += str(list[y][x])
-            print(visual_map.center(75))
+                visual_row += str(list[y][x])
+            visual_map += visual_row
+            visual_map = visual_map + '\n'
+        print(visual_map)
+        print('Your actual score is ' + str(score))
 
     #Create Player's snake
     def snek_spawn(self, list, snek_lenght):
@@ -155,17 +179,29 @@ class Map():
         if move_x == None:
             move_x = int(size_y/2)
             move_y = int(size_x/2)
-        direction_change()
+        if boring_fruit_flag == False:
+            direction_change()
         #up
         if direction == 'w':
-            #print(list[a][b-1])
-            if list[move_x][move_y-1] in impassable_symbols:
+            move = list[move_x][move_y-1]
+            if move in impassable_symbols:
                 game_over()
-            elif list[move_x][move_y-1] == classic_fruit_symbol:
-                fruit_collected(classic_fruit_obj, coords)
+            elif move in fruits:
+                if move == classic_fruit_symbol:
+                    fruit_obj = classic_fruit_obj
+                elif move == death_fruit_symbol:
+                    fruit_obj = death_fruit_obj
+                elif move == speed_fruit_symbol:
+                    fruit_obj = speed_fruit_obj
+                elif move == drunk_fruit_symbol:
+                    fruit_obj = drunk_fruit_obj
+                elif move == boring_fruit_symbol:
+                    fruit_obj = boring_fruit_obj
+                fruit_obj.effect()
+                fruit_obj.fruit_spawn(coords)
                 list[move_x][move_y-1] = snake_symbol
                 move_y -= 1
-            elif list[move_x][move_y-1] == blank_spot:
+            elif move == blank_spot:
                 list[move_x][move_y-1] = snake_symbol
                 move_y -= 1
                 del_x, del_y = snek_del(list, moves)
@@ -173,14 +209,25 @@ class Map():
             moves.append('w')
         #left
         elif direction == 'a':
-            #print(list[a-1][b])
-            if list[move_x-1][move_y] in impassable_symbols:
+            move = list[move_x-1][move_y]
+            if move in impassable_symbols:
                 game_over()
-            elif list[move_x-1][move_y] == classic_fruit_symbol:
-                fruit_collected(classic_fruit_obj, coords)
+            elif move in fruits:
+                if move == classic_fruit_symbol:
+                    fruit_obj = classic_fruit_obj
+                elif move == death_fruit_symbol:
+                    fruit_obj = death_fruit_obj
+                elif move == speed_fruit_symbol:
+                    fruit_obj = speed_fruit_obj
+                elif move == drunk_fruit_symbol:
+                    fruit_obj = drunk_fruit_obj
+                elif move == boring_fruit_symbol:
+                    fruit_obj = boring_fruit_obj
+                fruit_obj.effect()
+                fruit_obj.fruit_spawn(coords)
                 list[move_x-1][move_y] = snake_symbol
                 move_x -= 1
-            elif list[move_x-1][move_y] == blank_spot:
+            elif move == blank_spot:
                 list[move_x-1][move_y] = snake_symbol
                 move_x -= 1
                 del_x, del_y = snek_del(list, moves)
@@ -188,13 +235,25 @@ class Map():
             moves.append('a')
         #down
         elif direction == 's':
-            if list[move_x][move_y+1] in impassable_symbols:
+            move = list[move_x][move_y+1]
+            if move in impassable_symbols:
                 game_over()
-            elif list[move_x][move_y+1] == classic_fruit_symbol:
-                fruit_collected(classic_fruit_obj, coords)
+            elif move in fruits:
+                if move == classic_fruit_symbol:
+                    fruit_obj = classic_fruit_obj
+                elif move == death_fruit_symbol:
+                    fruit_obj = death_fruit_obj
+                elif move == speed_fruit_symbol:
+                    fruit_obj = speed_fruit_obj
+                elif move == drunk_fruit_symbol:
+                    fruit_obj = drunk_fruit_obj
+                elif move == boring_fruit_symbol:
+                    fruit_obj = boring_fruit_obj
+                fruit_obj.effect()
+                fruit_obj.fruit_spawn(coords)
                 list[move_x][move_y+1] = snake_symbol
                 move_y += 1
-            elif list[move_x][move_y+1] == blank_spot:
+            elif move == blank_spot:
                 list[move_x][move_y+1] = snake_symbol
                 move_y += 1
                 del_x, del_y = snek_del(list, moves)
@@ -202,18 +261,77 @@ class Map():
             moves.append('s')
         #right
         elif direction == 'd':
-            if list[move_x+1][move_y] in impassable_symbols:
+            move = list[move_x+1][move_y]
+            if move in impassable_symbols:
                 game_over()
-            elif list[move_x+1][move_y] == classic_fruit_symbol:
-                fruit_collected(classic_fruit_obj, coords)
+            elif move in fruits:
+                if move == classic_fruit_symbol:
+                    fruit_obj = classic_fruit_obj
+                elif move == death_fruit_symbol:
+                    fruit_obj = death_fruit_obj
+                elif move == speed_fruit_symbol:
+                    fruit_obj = speed_fruit_obj
+                elif move == drunk_fruit_symbol:
+                    fruit_obj = drunk_fruit_obj
+                elif move == boring_fruit_symbol:
+                    fruit_obj = boring_fruit_obj
+                fruit_obj.effect()
+                fruit_obj.fruit_spawn(coords)
                 list[move_x+1][move_y] = snake_symbol
                 move_x += 1
-            elif list[move_x+1][move_y] == blank_spot:
+            elif move == blank_spot:
                 list[move_x+1][move_y] = snake_symbol
                 move_x += 1
                 del_x, del_y = snek_del(list, moves)
                 list[del_x][del_y] = blank_spot
             moves.append('d')
+
+#Superclass of all fruits
+class Fruit():
+    def __init__(self, fruit_symbol):
+        self.fruit_symbol = fruit_symbol
+
+        #Spawn point creating device with random spawn on board
+    def fruit_spawn(self, list):
+        while 1:
+            y = random.randint(1, size_y-2)
+            x = random.randint(1, size_x-2) 
+            if(list[x][y]== blank_spot):#Assure our fruits won't spawn on occupied tiles
+                list[x][y] = self.fruit_symbol
+                break
+            else:#In case it wants to spawn where snake actually is
+                continue
+
+#Classic fruit - Just points
+class Classic_Fruit(Fruit):
+    def effect(self):
+        score_up(250)
+
+#Speed fruit - Move faster
+class Speed_Fruit(Fruit):
+    def effect(self):
+        global speed
+        score_up(500)
+        speed /= 1.37
+
+#Boring fruit - Unable to change direction
+class Boring_Fruit(Fruit):
+    def effect(self):
+        score_up(750)
+        threading.Thread(target = boring_fruit_effect).start()
+
+#Drunk fruit - Get controled by rng god
+class Drunk_Fruit(Fruit):
+    def effect(self):
+        score_up(1500)
+        threading.Thread(target = drunk_fruit_effect).start()
+
+#Death fruit - You eat, you die
+class Death_Fruit(Fruit):
+    def effect(self):
+        score_up(score*3)
+        game_over()
+
 #create map        
 table = Map(size_x, size_y)
 #create coords
@@ -222,12 +340,23 @@ coords = table.create_2d_table()
 table.change_map_tiles(coords)
 #create snake
 table.snek_spawn(coords, snek_lenght)
-#create fruit
+#create fruits
 classic_fruit_obj = Classic_Fruit(classic_fruit_symbol)
 classic_fruit_obj.fruit_spawn(coords)
-#move the snake
+speed_fruit_obj = Speed_Fruit(speed_fruit_symbol)
+speed_fruit_obj.fruit_spawn(coords)
+boring_fruit_obj = Boring_Fruit(boring_fruit_symbol)
+boring_fruit_obj.fruit_spawn(coords)
+drunk_fruit_obj = Drunk_Fruit(drunk_fruit_symbol)
+drunk_fruit_obj.fruit_spawn(coords)
+death_fruit_obj = Death_Fruit(death_fruit_symbol)
+death_fruit_obj.fruit_spawn(coords)
+#move the snake    
 while 1:
     table.snek_move(coords, direction)
     time.sleep(speed)
-    os.system('clear')
+    if system == 'linux':
+        os.system('clear')
+    else:
+        os.system('cls')
     table.map_drawer(coords)
