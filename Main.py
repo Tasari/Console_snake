@@ -11,28 +11,32 @@ import colorama
 #Global options
 size_x = 30
 size_y = 30
+#Symbols have to be 2 characters
 border_symbol = colorama.Fore.WHITE + '#' * 2 + colorama.Style.RESET_ALL
 classic_fruit_symbol = colorama.Fore.RED + '░' * 2 + colorama.Style.RESET_ALL
 speed_fruit_symbol = colorama.Fore.BLUE + '░' * 2 + colorama.Style.RESET_ALL
 boring_fruit_symbol = colorama.Fore.YELLOW + '░' * 2 + colorama.Style.RESET_ALL
 drunk_fruit_symbol = colorama.Fore.MAGENTA + '░' * 2 + colorama.Style.RESET_ALL
 death_fruit_symbol = colorama.Fore.WHITE + '░' * 2 + colorama.Style.RESET_ALL
+multiply_fruit_symbol = colorama.Fore.CYAN + '░' * 2 + colorama.Style.RESET_ALL
 snake_symbol = colorama.Fore.GREEN + '█' * 2 + colorama.Style.RESET_ALL
 blank_spot = colorama.Fore.BLACK + colorama.Back.BLACK + ' ' * 2 + colorama.Style.RESET_ALL
 left_border = colorama.Fore.WHITE + ' #' + colorama.Style.RESET_ALL
 right_border = colorama.Fore.WHITE + '# ' + colorama.Style.RESET_ALL
+#The less speed you have here, the faster you go
 speed = 0.1
+#Direction of the beggining
 direction = None
+#Starting lenght
 snek_lenght = 4
 #DO NOT TOUCH
-system = sys.platform
 score = 0
 moves = []
 move_x = None
 del_x = None
 boring_fruit_flag = False
 drunk_fruit_flag = False
-fruits = [boring_fruit_symbol, classic_fruit_symbol, death_fruit_symbol, drunk_fruit_symbol, speed_fruit_symbol]
+fruits = [multiply_fruit_symbol, boring_fruit_symbol, classic_fruit_symbol, death_fruit_symbol, drunk_fruit_symbol, speed_fruit_symbol]
 impassable_symbols = [border_symbol, snake_symbol, left_border, right_border]
 pyautogui.PAUSE = 0.02
 
@@ -148,9 +152,11 @@ class Map():
         list[size_x-1][11] = drunk_fruit_symbol + ' - Drunk Fruit'
         list[size_x-1][12] = 'Randomly change directions'
         list[size_x-1][13] = 'for {} moves (1500 points)'.format(int((size_x+size_y)/20))
-        list[size_x -1][15] = death_fruit_symbol + ' - Death Fruit' 
-        list[size_x-1][16] = 'You collect it, you die, simple and fun,'
-        list[size_x-1][17] = 'you also get your final score multiplied'
+        list[size_x-1][18] = death_fruit_symbol + ' - Death Fruit' 
+        list[size_x-1][19] = 'You collect it, you die, simple and fun,'
+        list[size_x-1][20] = 'you also get your final score multiplied'
+        list[size_x-1][15] = multiply_fruit_symbol + ' - Multiply Fruit'
+        list[size_x-1][16] = 'More fruits on board = more fun (2500 points)'
     #Add function to draw a map from coords in form of string
     def map_drawer(self, list):
         visual_map = ''
@@ -197,6 +203,8 @@ class Map():
                     fruit_obj = drunk_fruit_obj
                 elif move == boring_fruit_symbol:
                     fruit_obj = boring_fruit_obj
+                elif move == multiply_fruit_symbol:
+                    fruit_obj = multiply_fruit_obj
                 fruit_obj.effect()
                 fruit_obj.fruit_spawn(coords)
                 list[move_x][move_y-1] = snake_symbol
@@ -223,6 +231,8 @@ class Map():
                     fruit_obj = drunk_fruit_obj
                 elif move == boring_fruit_symbol:
                     fruit_obj = boring_fruit_obj
+                elif move == multiply_fruit_symbol:
+                    fruit_obj = multiply_fruit_obj                    
                 fruit_obj.effect()
                 fruit_obj.fruit_spawn(coords)
                 list[move_x-1][move_y] = snake_symbol
@@ -249,6 +259,8 @@ class Map():
                     fruit_obj = drunk_fruit_obj
                 elif move == boring_fruit_symbol:
                     fruit_obj = boring_fruit_obj
+                elif move == multiply_fruit_symbol:
+                    fruit_obj = multiply_fruit_obj
                 fruit_obj.effect()
                 fruit_obj.fruit_spawn(coords)
                 list[move_x][move_y+1] = snake_symbol
@@ -275,6 +287,8 @@ class Map():
                     fruit_obj = drunk_fruit_obj
                 elif move == boring_fruit_symbol:
                     fruit_obj = boring_fruit_obj
+                elif move == multiply_fruit_symbol:
+                    fruit_obj = multiply_fruit_obj
                 fruit_obj.effect()
                 fruit_obj.fruit_spawn(coords)
                 list[move_x+1][move_y] = snake_symbol
@@ -291,7 +305,7 @@ class Fruit():
     def __init__(self, fruit_symbol):
         self.fruit_symbol = fruit_symbol
 
-        #Spawn point creating device with random spawn on board
+        #Creating fruit randomly on board
     def fruit_spawn(self, list):
         while 1:
             y = random.randint(1, size_y-2)
@@ -331,6 +345,15 @@ class Death_Fruit(Fruit):
     def effect(self):
         score_up(score*3)
         game_over()
+#Multiply Fruit - More Fruits
+class Multiply_Fruit(Fruit):
+    def effect(self):
+        score_up(2500)
+        classic_fruit_obj.fruit_spawn(coords)
+        speed_fruit_obj.fruit_spawn(coords)
+        boring_fruit_obj.fruit_spawn(coords)
+        drunk_fruit_obj.fruit_spawn(coords)
+        death_fruit_obj.fruit_spawn(coords)
 
 #create map        
 table = Map(size_x, size_y)
@@ -351,11 +374,13 @@ drunk_fruit_obj = Drunk_Fruit(drunk_fruit_symbol)
 drunk_fruit_obj.fruit_spawn(coords)
 death_fruit_obj = Death_Fruit(death_fruit_symbol)
 death_fruit_obj.fruit_spawn(coords)
+multiply_fruit_obj = Multiply_Fruit(multiply_fruit_symbol)
+multiply_fruit_obj.fruit_spawn(coords)
 #move the snake    
 while 1:
     table.snek_move(coords, direction)
     time.sleep(speed)
-    if system == 'linux':
+    if sys.platform == 'linux':
         os.system('clear')
     else:
         os.system('cls')
