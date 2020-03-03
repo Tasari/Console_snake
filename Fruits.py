@@ -1,22 +1,30 @@
-from Options import fruits, speed
+from Options import fruits
 from Other import score_up, game_over
-import Map
-import time
-import threading
 
-#Effect of eating boring fruit - You are unable to change direction
+# Effect of eating boring fruit - You are unable to change direction
 def boring_fruit_effect(Map):
     boring_counter = 5
     boring_fruit_flag = True
     return boring_fruit_flag, boring_counter
 
-#Effect of eating drunk fruit - Your direction is changed randomly
+
+# Effect of eating drunk fruit - Your direction is changed randomly
 def drunk_fruit_effect(Map):
     drunk_counter = 3
     drunk_fruit_flag = True
     return drunk_fruit_flag, drunk_counter
 
-def trigger(fruit_symbol, Map, score, speed, drunk_fruit_flag, boring_fruit_flag, drunk_counter, boring_counter):
+
+def trigger(
+    fruit_symbol,
+    Map,
+    score,
+    speed,
+    drunk_fruit_flag,
+    boring_fruit_flag,
+    drunk_counter,
+    boring_counter,
+):
     if fruit_symbol == fruits["classic_fruit_symbol"]:
         score += 250
     elif fruit_symbol == fruits["speed_fruit_symbol"]:
@@ -34,6 +42,13 @@ def trigger(fruit_symbol, Map, score, speed, drunk_fruit_flag, boring_fruit_flag
         score += 1000
         [Map.spawn_fruit(x) for x in fruits.keys()]
     elif fruit_symbol == fruits["death_fruit_symbol"]:
-        score *=2
+        score *= 2
         game_over(score)
-    return score, speed, drunk_fruit_flag, boring_fruit_flag, drunk_counter, boring_counter
+    return (
+        score,
+        speed,
+        drunk_fruit_flag,
+        boring_fruit_flag,
+        drunk_counter,
+        boring_counter,
+    )
