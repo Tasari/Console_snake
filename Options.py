@@ -1,13 +1,13 @@
 import colorama
 
-# Feel free to change those options
+# The sizes of the map
 size_x = 30
 size_y = 30
-# The less speed you have here, the faster you go at the start of game
+# Map refresh speed in seconds
 speed = 1
 # Starting lenght not counting the head
 lenght = 4
-# Symbols have to be 2 characters
+# Symbols have to be 2 characters and between colorama functions
 blank_spot = (
     colorama.Fore.BLACK + colorama.Back.BLACK + " " * 2 + colorama.Style.RESET_ALL
 )

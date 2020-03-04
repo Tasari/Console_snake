@@ -3,12 +3,13 @@ import time
 import sys
 import msvcrt
 
-# Player score increaser
-def score_up(x, score):
-    score += x
-
 
 def inputter(direction, time_limit):
+    '''
+    Takes the actual direction 
+    and time limit to change it,
+    and returns the inputted letter 
+    '''
     temp_direction = direction
     start_time = time.time()
     while 1:
@@ -21,6 +22,12 @@ def inputter(direction, time_limit):
 
 
 def direction_change(drunk_fruit_flag, boring_fruit_flag, direction, speed):
+    '''
+    Changes the direction, 
+    if drunk fruit is active it changes randomly, 
+    if boring fruit is active it doesn't change,
+    else takes the input from user
+    '''
     if drunk_fruit_flag == True:
         directions = ["w", "a", "s", "d"]
         temp_direction = directions[random.randrange(0, 3)]
@@ -28,7 +35,14 @@ def direction_change(drunk_fruit_flag, boring_fruit_flag, direction, speed):
         temp_direction = direction
     else:
         temp_direction = inputter(direction, speed)
-    # assure that player won't be able to go turn 180°
+    direction = direction_valid(direction, temp_direction)
+    return direction
+
+
+def direction_valid(direction, temp_direction):
+    '''
+    Assures that player's move is valid
+    '''
     if temp_direction == "w" and direction != "s":
         direction = temp_direction
     elif temp_direction == "a" and direction != "d":
@@ -41,13 +55,19 @@ def direction_change(drunk_fruit_flag, boring_fruit_flag, direction, speed):
 
 
 def val2key(dictionary, value):
+    '''
+    Gives the key in the dictionary 
+    which returns the given value 
+    '''
     for key, val in dictionary.items():
         if val == value:
             return key
 
 
-# function called after moving into impassable tile
 def game_over(score):
+    '''
+    Ends the game
+    '''
     print("You lose")
     print("Your final score is " + str(score))
     time.sleep(5)

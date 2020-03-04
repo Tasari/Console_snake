@@ -5,13 +5,17 @@ from Other import game_over, val2key
 
 class Snake:
     def __init__(self, Map):
+        '''
+        Creates the table of past moves and 
+        registers the snake on the middle of map
+        '''
         self.move_x = int(Map.map_y / 2)
         self.move_y = int(Map.map_x / 2)
         self.del_x = int(Map.map_y / 2)
         self.del_y = int(Map.map_x / 2) + lenght
         self.map = Map
         self.moves = []
-        self.symbol = blank_spot
+        self.symbol = impassable_symbols['snake_symbol']
 
     def move(
         self,
@@ -23,6 +27,12 @@ class Snake:
         drunk_counter,
         boring_counter,
     ):
+        '''
+        Moves the snake in given direction,
+        remembers that move, ends the game if impassable
+        symbol is approached, deletes the saved move 
+        if its necessary, and lowers down the counter of blocked moves
+        '''
         if direction == "w":
             move = self.map.board[self.move_x][self.move_y - 1]
         elif direction == "a":
@@ -102,6 +112,9 @@ class Snake:
         )
 
     def delete(self):
+        '''
+        Deletes the snake symbol from given tile
+        '''
         self.map.board[self.del_x][self.del_y] = blank_spot
         if self.moves[0] == "w":
             self.del_y -= 1
