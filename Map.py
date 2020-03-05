@@ -54,11 +54,11 @@ class Map_obj:
         self.board[self.map_x - 1][4] = fruits["speed_fruit_symbol"] + " - Speed Fruit"
         self.board[self.map_x - 1][5] = "Increase your speed (500 points)"
         self.board[self.map_x - 1][7] = (
-            fruits["move_blocking_fruit_symbol"] + " - move blocking Fruit"
+            fruits["move_blocking_fruit_symbol"] + " - Boring Fruit"
         )
         self.board[self.map_x - 1][8] = "Lose ability to change"
         self.board[self.map_x - 1][9] = "direction for 5 moves (750 points)"
-        self.board[self.map_x - 1][11] = fruits["random_move_symbol"] + " - random move"
+        self.board[self.map_x - 1][11] = fruits["random_move_symbol"] + " - Drunk Fruit"
         self.board[self.map_x - 1][12] = "Randomly change directions"
         self.board[self.map_x - 1][13] = "for 3 moves (1500 points)"
         self.board[self.map_x - 1][15] = (
