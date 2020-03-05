@@ -8,7 +8,7 @@ import time
 import sys
 import os
 
-# Set start variables
+# Set default variables in Parameters object
 params = Parameters()
 # Creating the map
 game_map = Map_obj(size_x, size_y)

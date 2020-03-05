@@ -7,9 +7,9 @@ class Parameters:
         self.score = 0
         self.move_x = None
         self.del_x = None
-        self.boring_fruit_flag = False
-        self.drunk_fruit_flag = False
+        self.move_blocking_fruit_flag = False
+        self.random_move_flag = False
         self.direction = None
-        self.drunk_counter = 0
-        self.boring_counter = 0
+        self.random_move_counter = 0
+        self.move_blocking_counter = 0
         self.direction = None

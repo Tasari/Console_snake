@@ -19,7 +19,7 @@ class Snake:
 
     def move(self, parameters_object):
         """
-        Moves the snake in given direction,
+        moves the snake in given direction,
         remembers that move, ends the game if impassable
         symbol is approached, deletes the saved move 
         if its necessary, and lowers down the counter of blocked moves
@@ -62,14 +62,14 @@ class Snake:
                 "snake_symbol"
             ]
             self.move_x += 1
-        if parameters_object.drunk_counter == 0:
-            parameters_object.drunk_fruit_flag = False
+        if parameters_object.random_move_counter == 0:
+            parameters_object.random_move_flag = False
         else:
-            parameters_object.drunk_counter -= 1
-        if parameters_object.boring_counter == 0:
-            parameters_object.boring_fruit_flag = False
+            parameters_object.random_move_counter -= 1
+        if parameters_object.move_blocking_counter == 0:
+            parameters_object.move_blocking_fruit_flag = False
         else:
-            parameters_object.boring_counter -= 1
+            parameters_object.move_blocking_counter -= 1
 
     def delete(self):
         """

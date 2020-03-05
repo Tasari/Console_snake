@@ -24,14 +24,14 @@ def inputter(direction, time_limit):
 def direction_change(parameters_object):
     """
     Changes the direction, 
-    if drunk fruit is active it changes randomly, 
-    if boring fruit is active it doesn't change,
+    if random move is active it changes randomly, 
+    if move blocking fruit is active it doesn't change,
     else takes the input from user
     """
-    if parameters_object.drunk_fruit_flag == True:
+    if parameters_object.random_move_flag == True:
         directions = ["w", "a", "s", "d"]
         temp_direction = directions[random.randrange(0, 3)]
-    elif parameters_object.boring_fruit_flag == True:
+    elif parameters_object.move_blocking_fruit_flag == True:
         temp_direction = parameters_object.direction
     else:
         temp_direction = inputter(parameters_object.direction, parameters_object.speed)

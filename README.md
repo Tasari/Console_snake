@@ -9,8 +9,8 @@ Project of snake game playable in system terminal, created without gaming module
 1. Multiple fruits:
     * Classic fruit
     * Speed fruit
-    * Boring fruit
-    * Drunk fruit
+    * move blocking fruit
+    * random move
     * Multiply fruit
     * Death fruit
 2. Score after the game

@@ -2,24 +2,24 @@ from Options import fruits
 from Other import game_over
 
 
-def boring_fruit_effect(Map, parameters_object):
+def move_blocking_fruit_effect(Map, parameters_object):
     """
-    Sets the boring fruit flag to True 
+    Sets the move blocking fruit flag to True 
     and sets the counter of moves till 
     the end to 5
     """
-    parameters_object.boring_counter = 5
-    parameters_object.boring_fruit_flag = True
+    parameters_object.move_blocking_counter = 4
+    parameters_object.move_blocking_fruit_flag = True
 
 
-def drunk_fruit_effect(Map, parameters_object):
+def random_move_effect(Map, parameters_object):
     """
-    Sets the drunk fruit flag to True 
+    Sets the random move flag to True 
     and sets the counter of moves till 
     the end to 3
     """
-    parameters_object.drunk_counter = 3
-    parameters_object.drunk_fruit_flag = True
+    parameters_object.random_move_counter = 2
+    parameters_object.random_move_flag = True
 
 
 def trigger(fruit_symbol, Map, parameters_object):
@@ -34,12 +34,12 @@ def trigger(fruit_symbol, Map, parameters_object):
         parameters_object.speed -= 0.1
         if parameters_object.speed < 0.01:
             parameters_object.speed = 0.01
-    elif fruit_symbol == fruits["boring_fruit_symbol"]:
+    elif fruit_symbol == fruits["move_blocking_fruit_symbol"]:
         parameters_object.score += 1000
-        boring_fruit_effect(Map, parameters_object)
-    elif fruit_symbol == fruits["drunk_fruit_symbol"]:
+        move_blocking_fruit_effect(Map, parameters_object)
+    elif fruit_symbol == fruits["random_move_symbol"]:
         parameters_object.score += 1500
-        drunk_fruit_effect(Map, parameters_object)
+        random_move_effect(Map, parameters_object)
     elif fruit_symbol == fruits["multiply_fruit_symbol"]:
         parameters_object.score += 1000
         [Map.spawn_fruit(x) for x in fruits.keys()]
