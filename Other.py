@@ -5,11 +5,11 @@ import msvcrt
 
 
 def inputter(direction, time_limit):
-    '''
+    """
     Takes the actual direction 
     and time limit to change it,
     and returns the inputted letter 
-    '''
+    """
     temp_direction = direction
     start_time = time.time()
     while 1:
@@ -21,53 +21,52 @@ def inputter(direction, time_limit):
             return direction
 
 
-def direction_change(drunk_fruit_flag, boring_fruit_flag, direction, speed):
-    '''
+def direction_change(parameters_object):
+    """
     Changes the direction, 
     if drunk fruit is active it changes randomly, 
     if boring fruit is active it doesn't change,
     else takes the input from user
-    '''
-    if drunk_fruit_flag == True:
+    """
+    if parameters_object.drunk_fruit_flag == True:
         directions = ["w", "a", "s", "d"]
         temp_direction = directions[random.randrange(0, 3)]
-    elif boring_fruit_flag == True:
-        temp_direction = direction
+    elif parameters_object.boring_fruit_flag == True:
+        temp_direction = parameters_object.direction
     else:
-        temp_direction = inputter(direction, speed)
-    direction = direction_valid(direction, temp_direction)
-    return direction
+        temp_direction = inputter(parameters_object.direction, parameters_object.speed)
+    direction_valid(parameters_object, temp_direction)
 
 
-def direction_valid(direction, temp_direction):
-    '''
+def direction_valid(parameters_object, temp_direction):
+    """
     Assures that player's move is valid
-    '''
-    if temp_direction == "w" and direction != "s":
-        direction = temp_direction
-    elif temp_direction == "a" and direction != "d":
-        direction = temp_direction
-    elif temp_direction == "s" and direction != "w":
-        direction = temp_direction
-    elif temp_direction == "d" and direction != "a":
-        direction = temp_direction
-    return direction
+    """
+    if temp_direction == "w" and parameters_object.direction != "s":
+        parameters_object.direction = temp_direction
+    elif temp_direction == "a" and parameters_object.direction != "d":
+        parameters_object.direction = temp_direction
+    elif temp_direction == "s" and parameters_object.direction != "w":
+        parameters_object.direction = temp_direction
+    elif temp_direction == "d" and parameters_object.direction != "a":
+        parameters_object.direction = temp_direction
+    return 1
 
 
 def val2key(dictionary, value):
-    '''
+    """
     Gives the key in the dictionary 
     which returns the given value 
-    '''
+    """
     for key, val in dictionary.items():
         if val == value:
             return key
 
 
 def game_over(score):
-    '''
+    """
     Ends the game
-    '''
+    """
     print("You lose")
     print("Your final score is " + str(score))
     time.sleep(5)

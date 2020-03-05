@@ -1,12 +1,12 @@
-from Options import fruits, impassable_symbols, blank_spot
+from Options import fruits, impassable_symbols, blank_spot, lenght
 import random
 
 
 class Map_obj:
     def __init__(self, map_x, map_y):
-        '''
+        """
         Creating the map with given height and width
-        '''
+        """
         self.map_x = map_x
         self.map_y = map_y
         self.board = [[x for x in range(self.map_x + 1)] for y in range(self.map_y)]
@@ -14,9 +14,9 @@ class Map_obj:
         self.add_instruction()
 
     def draw(self, score):
-        '''
+        """
         Draws the map saved in board and the score
-        '''
+        """
         visible_map = ""
         for x in range(self.map_x):
             visible_row = ""
@@ -28,29 +28,25 @@ class Map_obj:
         print("Your acutal score is " + str(score))
 
     def change_map_tiles(self):
-        '''
+        """
         Changes the initial map tiles, 
         giving blank symbol everywhere 
         and then creating border
-        '''
+        """
         for y in range(self.map_y):
             for x in range(self.map_x):
                 self.board[y][x] = blank_spot
         for x in range(self.map_x - 1):
             self.board[x][0] = impassable_symbols["border_symbol"]
-            self.board[x][self.map_y - 1] = impassable_symbols[
-                "border_symbol"
-            ]
+            self.board[x][self.map_y - 1] = impassable_symbols["border_symbol"]
         for y in range(self.map_y):
             self.board[0][y] = impassable_symbols["left_border"]
-            self.board[self.map_x - 2][y] = impassable_symbols[
-                "right_border"
-            ]
+            self.board[self.map_x - 2][y] = impassable_symbols["right_border"]
 
     def add_instruction(self):
-        '''
+        """
         Adds instructions next to the map
-        '''
+        """
         self.board[self.map_x - 1][1] = (
             fruits["classic_fruit_symbol"] + " - Classic Fruit"
         )
@@ -74,10 +70,10 @@ class Map_obj:
         self.board[self.map_x - 1][20] = "you also get your final score multiplied by 2"
 
     def spawn_fruit(self, fruit_symbol):
-        '''
+        """
         Spawns given fruit symbol on 
         random unocuppied tile on map
-        '''
+        """
         x = random.randint(1, self.map_x - 2)
         y = random.randint(1, self.map_y - 1)
         while self.board[x][y] != blank_spot:
@@ -85,13 +81,14 @@ class Map_obj:
             y = random.randint(1, self.map_y - 1)
         self.board[x][y] = fruits[fruit_symbol]
 
-    def spawn_snake(self, lenght, moves):
-        '''
+    def spawn_snake(self, Snake):
+        """
         Spawns the snake of given lenght on the map
-        '''
+        """
         x = int(self.map_x / 2)
         y = int(self.map_y / 2)
-        for i in range(lenght):
+        for i in range(lenght + 1):
             self.board[x][y] = impassable_symbols["snake_symbol"]
             y += 1
-            moves.append("w")
+            Snake.moves.append("w")
+        Snake.moves[:] = Snake.moves[1:]
