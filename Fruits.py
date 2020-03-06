@@ -2,7 +2,7 @@ from Options import fruits
 from Other import game_over
 
 
-def move_blocking_fruit_effect(Map, parameters_object):
+def move_blocking_fruit_effect(parameters_object):
     """
     Sets the move blocking fruit flag to True 
     and sets the counter of moves till 
@@ -12,7 +12,7 @@ def move_blocking_fruit_effect(Map, parameters_object):
     parameters_object.move_blocking_fruit_flag = True
 
 
-def random_move_effect(Map, parameters_object):
+def random_move_effect(parameters_object):
     """
     Sets the random move flag to True 
     and sets the counter of moves till 
@@ -36,10 +36,10 @@ def trigger(fruit_symbol, Map, parameters_object):
             parameters_object.speed = 0.01
     elif fruit_symbol == fruits["move_blocking_fruit_symbol"]:
         parameters_object.score += 1000
-        move_blocking_fruit_effect(Map, parameters_object)
+        move_blocking_fruit_effect(parameters_object)
     elif fruit_symbol == fruits["random_move_symbol"]:
         parameters_object.score += 1500
-        random_move_effect(Map, parameters_object)
+        random_move_effect(parameters_object)
     elif fruit_symbol == fruits["multiply_fruit_symbol"]:
         parameters_object.score += 1000
         [Map.spawn_fruit(x) for x in fruits.keys()]
