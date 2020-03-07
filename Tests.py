@@ -1,6 +1,8 @@
 import Fruits
-from Options import fruits
+from Options import fruits, impassable_symbols, blank_spot
 import unittest.mock
+import Map
+
 
 mockmap = unittest.mock.Mock()
 mockparams = unittest.mock.Mock()
@@ -36,6 +38,7 @@ def test_trigger_move_block():
     assert mockparams.move_blocking_counter == 4
     assert mockparams.move_blocking_fruit_flag == True
 
+
 def test_trigger_random_move():
     mockparams.score = 0
     mockparams.random_move_counter = 0
@@ -44,3 +47,12 @@ def test_trigger_random_move():
     assert mockparams.score == 1500
     assert mockparams.random_move_counter == 2
     assert mockparams.random_move_flag == True
+
+
+def test_change_map_tiles():
+    size_x = 20
+    size_y = 20
+    testmap = Map.Map_obj(size_x, size_y)
+    assert testmap.board[size_x-3][size_y-1] == impassable_symbols["border_symbol"]
+    assert testmap.board[size_x-2][5] == impassable_symbols["right_border"]
+    assert testmap.board[0][0] == impassable_symbols["left_border"]

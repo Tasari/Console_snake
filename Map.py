@@ -9,6 +9,7 @@ class Map_obj:
         """
         self.map_x = map_x
         self.map_y = map_y
+        #add one more x for instruction
         self.board = [[x for x in range(self.map_x + 1)] for y in range(self.map_y)]
         self.change_map_tiles()
         self.add_instruction()
