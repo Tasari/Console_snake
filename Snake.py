@@ -9,10 +9,10 @@ class Snake:
         Creates the table of past moves and 
         registers the snake on the middle of map
         """
-        self.move_x = int(Map.map_y / 2)
-        self.move_y = int(Map.map_x / 2)
-        self.del_x = int(Map.map_y / 2)
-        self.del_y = int(Map.map_x / 2) + lenght
+        self.move_x = int(Map.map_x / 2)
+        self.move_y = int(Map.map_y / 2)
+        self.del_x = int(Map.map_x / 2)
+        self.del_y = int(Map.map_y / 2) + lenght
         self.map = Map
         self.moves = []
         self.symbol = impassable_symbols["snake_symbol"]

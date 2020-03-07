@@ -2,11 +2,10 @@ import Fruits
 from Options import fruits, impassable_symbols, blank_spot, lenght
 import unittest.mock
 import Map
+import Snake
 
-
-mockmap = unittest.mock.Mock()
-mockparams = unittest.mock.Mock()
-
+mockparams = unittest.mock.MagicMock()
+mockmap = unittest.mock.MagicMock()
 
 def test_trigger_classic():
     mockparams.score = 0
@@ -67,3 +66,34 @@ def test_spawn_snake():
     assert testmap.board[int(size_x/2)][int(size_y/2)] == impassable_symbols["snake_symbol"]
     assert testmap.board[int(size_x/2)][int(size_y/2)+lenght] == impassable_symbols["snake_symbol"]
     mocksnake.moves.append.assert_called_with('w')
+
+def test_snake_move():
+    size_x = 20
+    size_y = 20
+    lenght = 4
+    testmap = Map.Map_obj(size_x, size_y)
+    testsnake = Snake.Snake(testmap)
+    mockparams = unittest.mock.MagicMock()
+    mockparams.direction = "w"
+    testsnake.move(mockparams)
+    assert testsnake.move_y == (size_y/2)-1
+    assert testsnake.del_y == (size_y/2) + lenght - 1
+    mockparams.direction = "a"
+    testsnake.move(mockparams)
+    assert testsnake.move_y == (size_y/2) - 1
+    assert testsnake.move_x == (size_x/2) - 1
+    assert testsnake.del_y == (size_y/2) + lenght - 1
+    assert testsnake.del_x == (size_x/2) - 1
+    testsnake.move(mockparams)
+    mockparams.direction = "s"
+    testsnake.move(mockparams)
+    assert testsnake.move_y == (size_y/2)
+    assert testsnake.move_x == (size_x/2) - 2
+    assert testsnake.del_y == (size_y/2) + lenght
+    assert testsnake.del_x == (size_x/2) - 2
+    mockparams.direction = "d"
+    testsnake.move(mockparams)
+    assert testsnake.move_y == (size_y/2)
+    assert testsnake.move_x == (size_x/2) - 1
+    assert testsnake.del_y == (size_y/2) + lenght
+    assert testsnake.del_x == (size_x/2) - 1
