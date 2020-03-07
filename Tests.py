@@ -1,5 +1,5 @@
 import Fruits
-from Options import fruits, impassable_symbols, blank_spot
+from Options import fruits, impassable_symbols, blank_spot, lenght
 import unittest.mock
 import Map
 
@@ -56,3 +56,14 @@ def test_change_map_tiles():
     assert testmap.board[size_x-3][size_y-1] == impassable_symbols["border_symbol"]
     assert testmap.board[size_x-2][5] == impassable_symbols["right_border"]
     assert testmap.board[0][0] == impassable_symbols["left_border"]
+
+
+def test_spawn_snake():
+    size_x = 20
+    size_y = 20
+    testmap = Map.Map_obj(size_x, size_y)
+    mocksnake = unittest.mock.MagicMock()
+    testmap.spawn_snake(mocksnake)
+    assert testmap.board[int(size_x/2)][int(size_y/2)] == impassable_symbols["snake_symbol"]
+    assert testmap.board[int(size_x/2)][int(size_y/2)+lenght] == impassable_symbols["snake_symbol"]
+    mocksnake.moves.append.assert_called_with('w')
