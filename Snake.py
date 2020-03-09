@@ -18,6 +18,7 @@ class Snake:
         self.symbol = impassable_symbols["snake_symbol"]
         self.parameters_object = parameters_object
 
+
     def move(self):
         """
         moves the snake in given direction,
@@ -25,6 +26,26 @@ class Snake:
         symbol is approached, deletes the saved move 
         if its necessary, and lowers down the counter of blocked moves
         """
+        move = self.get_next_move()
+        if move == None:
+            return
+        self.interpret_move(move)
+        self.change_move_tile_into_snake()
+        self.decrease_counters()
+
+
+    def decrease_counters(self):
+        if self.parameters_object.random_move_counter == 0:
+            self.parameters_object.random_move_flag = False
+        else:
+            self.parameters_object.random_move_counter -= 1
+        if self.parameters_object.move_blocking_counter == 0:
+            self.parameters_object.move_blocking_fruit_flag = False
+        else:
+            self.parameters_object.move_blocking_counter -= 1
+
+
+    def get_next_move(self):
         if self.parameters_object.direction == "w":
             move = self.map.board[self.move_x][self.move_y - 1]
         elif self.parameters_object.direction == "a":
@@ -35,6 +56,10 @@ class Snake:
             move = self.map.board[self.move_x + 1][self.move_y]
         else:
             return
+        return move
+    
+
+    def interpret_move(self, move):
         self.moves.append(self.parameters_object.direction)
         if move in impassable_symbols.values():
             game_over(self.parameters_object.score)
@@ -43,6 +68,9 @@ class Snake:
             self.map.spawn_fruit(val2key(fruits, move))
         else:
             self.delete()
+
+
+    def change_move_tile_into_snake(self):
         if self.parameters_object.direction == "w":
             self.map.board[self.move_x][self.move_y - 1] = impassable_symbols[
                 "snake_symbol"
@@ -63,14 +91,7 @@ class Snake:
                 "snake_symbol"
             ]
             self.move_x += 1
-        if self.parameters_object.random_move_counter == 0:
-            self.parameters_object.random_move_flag = False
-        else:
-            self.parameters_object.random_move_counter -= 1
-        if self.parameters_object.move_blocking_counter == 0:
-            self.parameters_object.move_blocking_fruit_flag = False
-        else:
-            self.parameters_object.move_blocking_counter -= 1
+
 
     def delete(self):
         """
