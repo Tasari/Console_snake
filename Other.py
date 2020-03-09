@@ -50,7 +50,6 @@ def direction_valid(parameters_object, temp_direction):
         parameters_object.direction = temp_direction
     elif temp_direction == "d" and parameters_object.direction != "a":
         parameters_object.direction = temp_direction
-    return 1
 
 
 def val2key(dictionary, value):

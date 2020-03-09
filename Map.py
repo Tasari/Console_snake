@@ -28,6 +28,7 @@ class Map_obj:
         print(visible_map)
         print("Your acutal score is " + str(score))
 
+
     def change_map_tiles(self):
         """
         Changes the initial map tiles, 
@@ -37,6 +38,13 @@ class Map_obj:
         for y in range(self.map_y):
             for x in range(self.map_x):
                 self.board[y][x] = blank_spot
+        self.create_borders()
+
+    def create_borders(self):
+        """
+        Changes the border symbols of map, 
+        used in change map tiles
+        """
         for x in range(self.map_x - 1):
             self.board[x][0] = impassable_symbols["border_symbol"]
             self.board[x][self.map_y - 1] = impassable_symbols["border_symbol"]
@@ -44,6 +52,7 @@ class Map_obj:
             self.board[0][y] = impassable_symbols["left_border"]
             self.board[self.map_x - 2][y] = impassable_symbols["right_border"]
 
+            
     def add_instruction(self):
         """
         Adds instructions next to the map
