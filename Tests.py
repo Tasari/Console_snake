@@ -97,3 +97,13 @@ def test_snake_move():
     assert testsnake.move_x == (size_x/2) - 1
     assert testsnake.del_y == (size_y/2) + lenght
     assert testsnake.del_x == (size_x/2) - 1
+
+def test_move_decounter():
+    testsnake = Snake.Snake(unittest.mock.MagicMock())
+    mockparams = unittest.mock.MagicMock()
+    mockparams.direction = "w"
+    mockparams.move_blocking_counter = 5
+    mockparams.random_move_counter = 3
+    testsnake.move(mockparams)
+    assert mockparams.move_blocking_counter == 4
+    assert mockparams.random_move_counter == 2
