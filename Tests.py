@@ -72,38 +72,40 @@ def test_snake_move():
     size_y = 20
     lenght = 4
     testmap = Map.Map_obj(size_x, size_y)
-    testsnake = Snake.Snake(testmap)
     mockparams = unittest.mock.MagicMock()
-    mockparams.direction = "w"
-    testsnake.move(mockparams)
+    testsnake = Snake.Snake(testmap, mockparams)
+    mockparams = unittest.mock.MagicMock()
+    testsnake.parameters_object.direction = "w"
+    testsnake.move()
     assert testsnake.move_y == (size_y/2)-1
     assert testsnake.del_y == (size_y/2) + lenght - 1
-    mockparams.direction = "a"
-    testsnake.move(mockparams)
+    testsnake.parameters_object.direction = "a"
+    testsnake.move()
     assert testsnake.move_y == (size_y/2) - 1
     assert testsnake.move_x == (size_x/2) - 1
     assert testsnake.del_y == (size_y/2) + lenght - 1
     assert testsnake.del_x == (size_x/2) - 1
-    testsnake.move(mockparams)
-    mockparams.direction = "s"
-    testsnake.move(mockparams)
+    testsnake.move()
+    testsnake.parameters_object.direction = "s"
+    testsnake.move()
     assert testsnake.move_y == (size_y/2)
     assert testsnake.move_x == (size_x/2) - 2
     assert testsnake.del_y == (size_y/2) + lenght
     assert testsnake.del_x == (size_x/2) - 2
-    mockparams.direction = "d"
-    testsnake.move(mockparams)
+    testsnake.parameters_object.direction = "d"
+    testsnake.move()
     assert testsnake.move_y == (size_y/2)
     assert testsnake.move_x == (size_x/2) - 1
     assert testsnake.del_y == (size_y/2) + lenght
     assert testsnake.del_x == (size_x/2) - 1
 
 def test_move_decounter():
-    testsnake = Snake.Snake(unittest.mock.MagicMock())
     mockparams = unittest.mock.MagicMock()
-    mockparams.direction = "w"
-    mockparams.move_blocking_counter = 5
-    mockparams.random_move_counter = 3
-    testsnake.move(mockparams)
-    assert mockparams.move_blocking_counter == 4
-    assert mockparams.random_move_counter == 2
+    testsnake = Snake.Snake(unittest.mock.MagicMock(), mockparams)
+    
+    testsnake.parameters_object.direction = "w"
+    testsnake.parameters_object.move_blocking_counter = 5
+    testsnake.parameters_object.random_move_counter = 3
+    testsnake.move()
+    assert testsnake.parameters_object.move_blocking_counter == 4
+    assert testsnake.parameters_object.random_move_counter == 2

@@ -4,7 +4,7 @@ from Other import game_over, val2key
 
 
 class Snake:
-    def __init__(self, Map):
+    def __init__(self, Map, parameters_object):
         """
         Creates the table of past moves and 
         registers the snake on the middle of map
@@ -16,60 +16,61 @@ class Snake:
         self.map = Map
         self.moves = []
         self.symbol = impassable_symbols["snake_symbol"]
+        self.parameters_object = parameters_object
 
-    def move(self, parameters_object):
+    def move(self):
         """
         moves the snake in given direction,
         remembers that move, ends the game if impassable
         symbol is approached, deletes the saved move 
         if its necessary, and lowers down the counter of blocked moves
         """
-        if parameters_object.direction == "w":
+        if self.parameters_object.direction == "w":
             move = self.map.board[self.move_x][self.move_y - 1]
-        elif parameters_object.direction == "a":
+        elif self.parameters_object.direction == "a":
             move = self.map.board[self.move_x - 1][self.move_y]
-        elif parameters_object.direction == "s":
+        elif self.parameters_object.direction == "s":
             move = self.map.board[self.move_x][self.move_y + 1]
-        elif parameters_object.direction == "d":
+        elif self.parameters_object.direction == "d":
             move = self.map.board[self.move_x + 1][self.move_y]
         else:
             return
-        self.moves.append(parameters_object.direction)
+        self.moves.append(self.parameters_object.direction)
         if move in impassable_symbols.values():
-            game_over(parameters_object.score)
+            game_over(self.parameters_object.score)
         elif move in fruits.values():
-            trigger(move, self.map, parameters_object)
+            trigger(move, self.map, self.parameters_object)
             self.map.spawn_fruit(val2key(fruits, move))
         else:
             self.delete()
-        if parameters_object.direction == "w":
+        if self.parameters_object.direction == "w":
             self.map.board[self.move_x][self.move_y - 1] = impassable_symbols[
                 "snake_symbol"
             ]
             self.move_y -= 1
-        elif parameters_object.direction == "a":
+        elif self.parameters_object.direction == "a":
             self.map.board[self.move_x - 1][self.move_y] = impassable_symbols[
                 "snake_symbol"
             ]
             self.move_x -= 1
-        elif parameters_object.direction == "s":
+        elif self.parameters_object.direction == "s":
             self.map.board[self.move_x][self.move_y + 1] = impassable_symbols[
                 "snake_symbol"
             ]
             self.move_y += 1
-        elif parameters_object.direction == "d":
+        elif self.parameters_object.direction == "d":
             self.map.board[self.move_x + 1][self.move_y] = impassable_symbols[
                 "snake_symbol"
             ]
             self.move_x += 1
-        if parameters_object.random_move_counter == 0:
-            parameters_object.random_move_flag = False
+        if self.parameters_object.random_move_counter == 0:
+            self.parameters_object.random_move_flag = False
         else:
-            parameters_object.random_move_counter -= 1
-        if parameters_object.move_blocking_counter == 0:
-            parameters_object.move_blocking_fruit_flag = False
+            self.parameters_object.random_move_counter -= 1
+        if self.parameters_object.move_blocking_counter == 0:
+            self.parameters_object.move_blocking_fruit_flag = False
         else:
-            parameters_object.move_blocking_counter -= 1
+            self.parameters_object.move_blocking_counter -= 1
 
     def delete(self):
         """

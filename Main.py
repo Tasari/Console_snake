@@ -13,7 +13,7 @@ params = Parameters()
 # Creating the map
 game_map = Map_obj(size_x, size_y)
 # Creating Snake on map
-player = Snake(game_map)
+player = Snake(game_map, params)
 game_map.spawn_snake(player)
 # Spawn fruits symbols on map
 [game_map.spawn_fruit(z) for z in fruits.keys()]
@@ -24,7 +24,7 @@ print("Loading")
 # Loop going till game over function is called
 while 1:
     direction_change(params)
-    player.move(params)
+    player.move()
     if sys.platform == "linux":
         os.system("clear")
     else:
