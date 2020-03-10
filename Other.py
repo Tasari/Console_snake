@@ -15,7 +15,7 @@ def inputter(direction, time_limit):
     while 1:
         if msvcrt.kbhit():
             temp_direction = chr(ord(msvcrt.getche()))
-            if temp_direction != direction:
+            if temp_direction in ['w', 'a', 's', 'd', 'q']:
                 return temp_direction
         if time.time() - start_time > time_limit:
             return direction

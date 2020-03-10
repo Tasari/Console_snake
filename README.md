@@ -28,6 +28,12 @@ You will need:
 pip install colorama
 ```
 
+## Tutorial
+
+1. Move with WASD
+2. Press Q to speed up the next move
+3. Collect fruits to get longer and get more points
+
 ## Usage
 
 Run the program in IDLE
