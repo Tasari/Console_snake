@@ -9,7 +9,7 @@ class Map_obj:
         """
         self.map_x = map_x
         self.map_y = map_y
-        #add one more x for instruction
+        # add one more x for instruction
         self.board = [[x for x in range(self.map_x + 1)] for y in range(self.map_y)]
         self.change_map_tiles()
         self.add_instruction()
@@ -27,7 +27,6 @@ class Map_obj:
             visible_map += "\n"
         print(visible_map)
         print("Your acutal score is " + str(score))
-
 
     def change_map_tiles(self):
         """
@@ -52,7 +51,6 @@ class Map_obj:
             self.board[0][y] = impassable_symbols["left_border"]
             self.board[self.map_x - 2][y] = impassable_symbols["right_border"]
 
-            
     def add_instruction(self):
         """
         Adds instructions next to the map

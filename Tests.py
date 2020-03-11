@@ -7,6 +7,7 @@ import Snake
 mockparams = unittest.mock.MagicMock()
 mockmap = unittest.mock.MagicMock()
 
+
 def test_trigger_classic():
     mockparams.score = 0
     Fruits.trigger(fruits["classic_fruit_symbol"], mockmap, mockparams)
@@ -52,8 +53,8 @@ def test_change_map_tiles():
     size_x = 20
     size_y = 20
     testmap = Map.Map_obj(size_x, size_y)
-    assert testmap.board[size_x-3][size_y-1] == impassable_symbols["border_symbol"]
-    assert testmap.board[size_x-2][5] == impassable_symbols["right_border"]
+    assert testmap.board[size_x - 3][size_y - 1] == impassable_symbols["border_symbol"]
+    assert testmap.board[size_x - 2][5] == impassable_symbols["right_border"]
     assert testmap.board[0][0] == impassable_symbols["left_border"]
 
 
@@ -63,9 +64,16 @@ def test_spawn_snake():
     testmap = Map.Map_obj(size_x, size_y)
     mocksnake = unittest.mock.MagicMock()
     testmap.spawn_snake(mocksnake)
-    assert testmap.board[int(size_x/2)][int(size_y/2)] == impassable_symbols["snake_symbol"]
-    assert testmap.board[int(size_x/2)][int(size_y/2)+lenght] == impassable_symbols["snake_symbol"]
-    mocksnake.moves.append.assert_called_with('w')
+    assert (
+        testmap.board[int(size_x / 2)][int(size_y / 2)]
+        == impassable_symbols["snake_symbol"]
+    )
+    assert (
+        testmap.board[int(size_x / 2)][int(size_y / 2) + lenght]
+        == impassable_symbols["snake_symbol"]
+    )
+    mocksnake.moves.append.assert_called_with("w")
+
 
 def test_snake_move():
     size_x = 20
@@ -77,32 +85,33 @@ def test_snake_move():
     mockparams = unittest.mock.MagicMock()
     testsnake.parameters_object.direction = "w"
     testsnake.move()
-    assert testsnake.move_y == (size_y/2)-1
-    assert testsnake.del_y == (size_y/2) + lenght - 1
+    assert testsnake.move_y == (size_y / 2) - 1
+    assert testsnake.del_y == (size_y / 2) + lenght - 1
     testsnake.parameters_object.direction = "a"
     testsnake.move()
-    assert testsnake.move_y == (size_y/2) - 1
-    assert testsnake.move_x == (size_x/2) - 1
-    assert testsnake.del_y == (size_y/2) + lenght - 1
-    assert testsnake.del_x == (size_x/2) - 1
+    assert testsnake.move_y == (size_y / 2) - 1
+    assert testsnake.move_x == (size_x / 2) - 1
+    assert testsnake.del_y == (size_y / 2) + lenght - 1
+    assert testsnake.del_x == (size_x / 2) - 1
     testsnake.move()
     testsnake.parameters_object.direction = "s"
     testsnake.move()
-    assert testsnake.move_y == (size_y/2)
-    assert testsnake.move_x == (size_x/2) - 2
-    assert testsnake.del_y == (size_y/2) + lenght
-    assert testsnake.del_x == (size_x/2) - 2
+    assert testsnake.move_y == (size_y / 2)
+    assert testsnake.move_x == (size_x / 2) - 2
+    assert testsnake.del_y == (size_y / 2) + lenght
+    assert testsnake.del_x == (size_x / 2) - 2
     testsnake.parameters_object.direction = "d"
     testsnake.move()
-    assert testsnake.move_y == (size_y/2)
-    assert testsnake.move_x == (size_x/2) - 1
-    assert testsnake.del_y == (size_y/2) + lenght
-    assert testsnake.del_x == (size_x/2) - 1
+    assert testsnake.move_y == (size_y / 2)
+    assert testsnake.move_x == (size_x / 2) - 1
+    assert testsnake.del_y == (size_y / 2) + lenght
+    assert testsnake.del_x == (size_x / 2) - 1
+
 
 def test_move_decounter():
     mockparams = unittest.mock.MagicMock()
     testsnake = Snake.Snake(unittest.mock.MagicMock(), mockparams)
-    
+
     testsnake.parameters_object.direction = "w"
     testsnake.parameters_object.move_blocking_counter = 5
     testsnake.parameters_object.random_move_counter = 3

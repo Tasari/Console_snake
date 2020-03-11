@@ -13,7 +13,9 @@ blank_spot = (
 )
 fruits = {
     "multiply_fruit_symbol": colorama.Fore.CYAN + "░" * 2 + colorama.Style.RESET_ALL,
-    "move_blocking_fruit_symbol": colorama.Fore.YELLOW + "░" * 2 + colorama.Style.RESET_ALL,
+    "move_blocking_fruit_symbol": colorama.Fore.YELLOW
+    + "░" * 2
+    + colorama.Style.RESET_ALL,
     "classic_fruit_symbol": colorama.Fore.RED + "░" * 2 + colorama.Style.RESET_ALL,
     "death_fruit_symbol": colorama.Fore.WHITE + "░" * 2 + colorama.Style.RESET_ALL,
     "random_move_symbol": colorama.Fore.MAGENTA + "░" * 2 + colorama.Style.RESET_ALL,
